@@ -9,6 +9,8 @@ crate-type = ["cdylib", "lib"]
 name = "onchain_voting"
 
 [features]
+idl-build = ["anchor-lang/idl-build"]
+
 no-entrypoint = []
 no-idl = []
 no-log-ix-name = []
