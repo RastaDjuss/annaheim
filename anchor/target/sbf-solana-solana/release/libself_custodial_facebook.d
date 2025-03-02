@@ -1,0 +1,1 @@
+/home/anarchsun/devs/anarcrypt.sol/annaheim/anchor/target/sbf-solana-solana/release/libself_custodial_facebook.rlib: /home/anarchsun/devs/anarcrypt.sol/annaheim/anchor/programs/self-custodial-facebook/src/lib.rs

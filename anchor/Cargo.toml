@@ -1,13 +1,7 @@
 [workspace]
 members = [
-    "programs/ana",
-    "programs/anarco_world",
-    "programs/anna_heim",
-    "programs/non-custodial-escrow",
-    "programs/onchain-voting",
-    "programs/self-custodial-facebook"
-    ]
-
+    "programs/*"
+]
 resolver = "2"
 
 [profile.release]
