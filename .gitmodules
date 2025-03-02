@@ -1,0 +1,3 @@
+[submodule "anchor-apps"]
+	path = anchor-apps
+	url = git@github.com:RastaDjuss/anchor-by-example.git
