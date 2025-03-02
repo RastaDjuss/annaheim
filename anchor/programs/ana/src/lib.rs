@@ -1,4 +1,5 @@
 #![allow(clippy::result_large_err)]
+#![allow(unexpected_cfgs)]
 
 use anchor_lang::prelude::*;
 
@@ -6,19 +7,19 @@ declare_id!("coUnmi3oBUtwtd9fjeAvSsJssXh5A5xyPbhpewyzRVF");
 
 #[program]
 pub mod ana {
-    use super::*;
+  use super::*;
 
   pub fn close(_ctx: Context<CloseAna>) -> Result<()> {
     Ok(())
   }
 
   pub fn decrement(ctx: Context<Update>) -> Result<()> {
-    ctx.accounts.ana.count = ctx.accounts.ana.count.checked_sub(1).unwrap();
+    ctx.accounts.ana.count = ctx.accounts.ana.count.checked_sub(1).ok_or_else(|| error!(AnaError::Underflow))?;
     Ok(())
   }
 
   pub fn increment(ctx: Context<Update>) -> Result<()> {
-    ctx.accounts.ana.count = ctx.accounts.ana.count.checked_add(1).unwrap();
+    ctx.accounts.ana.count = ctx.accounts.ana.count.checked_add(1).ok_or_else(|| error!(AnaError::Overflow))?;
     Ok(())
   }
 
@@ -27,7 +28,7 @@ pub mod ana {
   }
 
   pub fn set(ctx: Context<Update>, value: u8) -> Result<()> {
-    ctx.accounts.ana.count = value.clone();
+    ctx.accounts.ana.count = value;
     Ok(())
   }
 }
@@ -67,4 +68,10 @@ pub struct Update<'info> {
 #[derive(InitSpace)]
 pub struct Ana {
   count: u8,
+}
+
+#[error_code]
+pub enum AnaError {
+  Underflow,
+  Overflow,
 }

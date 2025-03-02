@@ -1,5 +1,5 @@
 {
-  "address": "7GwbA3FMiRgtsHndhTL5a47iqqM1zuMJ3iC4RtedpPpw",
+  "address": "coUnmi3oBUtwtd9fjeAvSsJssXh5A5xyPbhpewyzRVF",
   "metadata": {
     "name": "ana",
     "version": "0.1.0",
@@ -141,6 +141,16 @@
         123,
         254
       ]
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "Underflow"
+    },
+    {
+      "code": 6001,
+      "name": "Overflow"
     }
   ],
   "types": [

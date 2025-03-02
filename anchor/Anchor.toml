@@ -6,18 +6,21 @@ resolution = true
 skip-lint = false
 
 [programs.localnet]
+hello_world = "ThSq9qsRs6c6kBRrLJngezihMUgL86MdiDs4wNUi2F8"
 ana = "coUnmi3oBUtwtd9fjeAvSsJssXh5A5xyPbhpewyzRVF"
+non_custodial_escrow = "Fg6PaFpoGXkYsidMpWTK6W2BeZ7FEfcYkg476zPFsLnS"
+onchain_voting = "AkN2PoD2JrWyYzmB6FEbWBncQbsMxhYH5otfmQJFMsdC"
+self_custodial_facebook = "8vBaXtoP9dBt97jA9FQz9NyuchRpFWEuiLxLLj7MYbnQ"
 
 [registry]
 url = "https://api.apr.dev"
 
 [provider]
-cluster = "Localnet"
+cluster = "devnet"
 wallet = "~/.config/solana/id.json"
 
 [scripts]
 test = "../node_modules/.bin/jest --preset ts-jest"
-
 [test]
 startup_wait = 5000
 shutdown_wait = 2000

@@ -149,6 +149,16 @@ export type Ana = {
       ]
     }
   ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "underflow"
+    },
+    {
+      "code": 6001,
+      "name": "overflow"
+    }
+  ],
   "types": [
     {
       "name": "ana",
