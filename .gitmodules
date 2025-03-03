@@ -1,0 +1,3 @@
+[submodule "anchor/programs/governance"]
+	path = anchor/programs/governance
+	url = git@github.com:RastaDjuss/governance-program-library.git
