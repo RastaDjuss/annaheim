@@ -1,0 +1,31 @@
+
+[09:26:40.139] ./src/components/anna_heim/anna_heim-data-access.tsx
+[09:26:40.139] Attempted import error: 'getAnnaHeimProgramId' is not exported from '@project/anchor' (imported as 'getAnnaHeimProgramId').
+[09:26:40.140]
+[09:26:40.140] Import trace for requested module:
+[09:26:40.140] ./src/components/anna_heim/anna_heim-data-access.tsx
+[09:26:40.140] ./src/components/anna_heim/anna_heim-feature.tsx
+[09:26:40.140]
+[09:26:40.140] ./src/components/anna_heim/anna_heim-data-access.tsx
+[09:26:40.141] Attempted import error: 'getAnnaHeimProgram' is not exported from '@project/anchor' (imported as 'getAnnaHeimProgram').
+[09:26:40.141]
+[09:26:40.141] Import trace for requested module:
+[09:26:40.141] ./src/components/anna_heim/anna_heim-data-access.tsx
+[09:26:40.145] ./src/components/anna_heim/anna_heim-feature.tsx
+
+[09:26:51.029] ./src/components/anna_heim/anna_heim-data-access.tsx
+[09:26:51.029] Attempted import error: 'getAnnaHeimProgramId' is not exported from '@project/anchor' (imported as 'getAnnaHeimProgramId').
+[09:26:51.030]
+[09:26:51.031] Import trace for requested module:
+[09:26:51.031] ./src/components/anna_heim/anna_heim-data-access.tsx
+[09:26:51.031] ./src/components/anna_heim/anna_heim-feature.tsx
+[09:26:51.031]
+[09:26:51.032] ./src/components/anna_heim/anna_heim-data-access.tsx
+[09:26:51.034] Attempted import error: 'getAnnaHeimProgram' is not exported from '@project/anchor' (imported as 'getAnnaHeimProgram').
+[09:26:51.034]
+[09:26:51.034] Import trace for requested module:
+[09:26:51.034] ./src/components/anna_heim/anna_heim-data-access.tsx
+[09:26:51.036] ./src/components/anna_heim/anna_heim-feature.tsx
+[09:26:51.038/anchor/src/components/annaheim/annaheim-data-access.tsx:3:10
+[09:27:01.999] Type error: '"@project/anchor"' has no exported member named 'getAnnaheimProgram'. Did you mean 'getAnaheimProgram'?
+[09:27:01.9
