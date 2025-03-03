@@ -3,6 +3,9 @@ import { AnchorProvider, Program } from '@coral-xyz/anchor'
 import { Cluster, PublicKey } from '@solana/web3.js'
 import AnnaheimIDL from '../target/idl/annaheim.json'
 import type { Annaheim } from '../target/types/annaheim'
+import fs from 'fs';
+import path from 'path';
+
 
 // Re-export the generated IDL and type
 export { Annaheim, AnnaheimIDL }

@@ -1,8 +1,21 @@
 [workspace]
 members = [
-    "programs/*"
+    "programs/anarco_world",
+    "programs/annaheim",
+    "programs/journal",
+    "programs/non-custodial-escrow",
+    "programs/onchain-voting",
+    "programs/self-custodial-facebook",
+    "programs/governance/programs/gateway",
+    "programs/governance/programs/quadratic",
+    "programs/governance/programs/realm-voter",
+    "programs/governance/programs/nft-voter",
+    "programs/governance/programs/bonk-plugin",
+    "programs/governance/programs/token-haver",
+    "programs/governance/programs/token-voter"
 ]
 resolver = "2"
+edition = "2021"
 
 [profile.release]
 overflow-checks = true

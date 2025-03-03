@@ -12,12 +12,24 @@ anarco_world = "ThSq9qsRs6c6kBRrLJngezihMUgL86MdiDs4wNUi2F8"
 onchain-voting = "AkN2PoD2JrWyYzmB6FEbWBncQbsMxhYH5otfmQJFMsdC"
 non-custodial-escrow = "6jhqFRCphbsTJJCwa6azgURdyYDCv8pNHYgER7bM23oP"
 self-custodial-facebook = "8vBaXtoP9dBt97jA9FQz9NyuchRpFWEuiLxLLj7MYbnQ"
+nft_voter = "GnftV5kLjd67tvHpNGyodwWveEKivz3ZWvvE3Z4xi2iw"
+gateway = "GgathUhdrCWRHowoRKACjgWhYHfxCEdBi5ViqYN6HVxk"
+quadratic = "quadCSapU8nTdLg73KHDnmdxKnJQsh7GUbu5tZfnRRr"
+solana-gateway = "gatem74V238djXdzWnJf94Wo1DcnuGkfijbf3AuBhfs"
+token-haver = "7gobfUihgoxA14RUnVaseoah89ggCgYAzgz1JoaPAXam"
+token_voter = "HA99cuBQCCzZu1zuHN2qBxo2FBo1cxNLwKkdt6Prhy8v"
+bonk-plugin = "7yJT49ajgYyuhWYzQMzwEt9u9Zbbt7r8Ft2wq1bhhfyy"
 
-[registry]
+[registries]
+apr = { index = "https://api.apr.dev" }
+anchor = { index = "https://anchor.projectserum.com" }
 url = "https://api.apr.dev"
 
-[provider]
-cluster = "Localnet"
+[provider] # uncomment  the cluster you need
+#cluster = "Localnet"
+cluster = "devnet"
+# cluster = "mainnet"
+# cluster = "testnet"
 wallet = "~/.config/solana/id.json"
 
 [scripts]

@@ -31,7 +31,9 @@ pub mod non_custodial_escrow {
         Ok(())
     }
 
+
     pub fn accept(ctx: Context<Accept>) -> Result<()> {
+
         // transfer escrowd_x_token to buyer
         anchor_spl::token::transfer(
             CpiContext::new_with_signer(
@@ -41,11 +43,7 @@ pub mod non_custodial_escrow {
                     to: ctx.accounts.buyer_x_tokens.to_account_info(),
                     authority: ctx.accounts.escrow.to_account_info(),
                 },
-                &[&[
-                    "escrow6".as_bytes(),
-                    ctx.accounts.escrow.authority.as_ref(),
-                    &[ctx.accounts.escrow.bump],
-                ]],
+                &[&["escrow6".as_bytes(), ctx.accounts.escrow.authority.as_ref(), &[ctx.accounts.escrow.bump]]],
             ),
             ctx.accounts.escrowed_x_tokens.amount,
         )?;
@@ -66,6 +64,7 @@ pub mod non_custodial_escrow {
         Ok(())
     }
 
+
     pub fn cancel(ctx: Context<Cancel>) -> Result<()> {
         // return seller's x_token back to him/her
         anchor_spl::token::transfer(
@@ -76,11 +75,7 @@ pub mod non_custodial_escrow {
                     to: ctx.accounts.seller_x_token.to_account_info(),
                     authority: ctx.accounts.escrow.to_account_info(),
                 },
-                &[&[
-                    "escrow6".as_bytes(),
-                    ctx.accounts.seller.key().as_ref(),
-                    &[ctx.accounts.escrow.bump],
-                ]],
+                &[&["escrow6".as_bytes(), ctx.accounts.seller.key().as_ref(), &[ctx.accounts.escrow.bump]]],
             ),
             ctx.accounts.escrowed_x_tokens.amount,
         )?;
@@ -92,11 +87,7 @@ pub mod non_custodial_escrow {
                 destination: ctx.accounts.seller.to_account_info(),
                 authority: ctx.accounts.escrow.to_account_info(),
             },
-            &[&[
-                "escrow6".as_bytes(),
-                ctx.accounts.seller.key().as_ref(),
-                &[ctx.accounts.escrow.bump],
-            ]],
+            &[&["escrow6".as_bytes(), ctx.accounts.seller.key().as_ref(), &[ctx.accounts.escrow.bump]]],
         ))?;
 
         Ok(())
@@ -105,17 +96,18 @@ pub mod non_custodial_escrow {
 
 #[derive(Accounts)]
 pub struct Initialize<'info> {
+
     /// `seller`, who is willing to sell his token_x for token_y
     #[account(mut)]
     seller: Signer<'info>,
 
     /// Token x mint for ex. USDC
     x_mint: Account<'info, Mint>,
-    /// Token y mint
+    /// Token y mint 
     y_mint: Account<'info, Mint>,
 
-    /// ATA of x_mint
-    #[account(mut, constraint = seller_x_token.mint == x_mint.key() && seller_x_token.owner == seller.key())]
+    /// ATA of x_mint 
+    #[account(mut, constraint = seller_x_token.mint == x_mint.key() && seller_x_token.owner == seller.key())] 
     seller_x_token: Account<'info, TokenAccount>,
 
     #[account(
@@ -142,6 +134,7 @@ pub struct Initialize<'info> {
 
 #[derive(Accounts)]
 pub struct Accept<'info> {
+
     pub buyer: Signer<'info>,
 
     #[account(
@@ -205,5 +198,5 @@ pub struct Escrow {
 }
 
 impl Escrow {
-    pub const LEN: usize = 8 + 1 + 32 + 32 + 32 + 8;
+    pub const LEN: usize = 8 + 1+ 32 + 32 + 32 + 8;
 }

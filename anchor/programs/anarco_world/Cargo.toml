@@ -1,7 +1,7 @@
 [package]
-name = "anarco_world"
-version = "6.6.6"
-description = "Created with Anarchor"
+name = "Anarco-world"
+version = "0.1.0"
+description = "Created with Anchor"
 edition = "2021"
 
 [lib]
@@ -14,12 +14,8 @@ no-idl = []
 no-log-ix-name = []
 cpi = ["no-entrypoint"]
 default = []
-test-bpf = []
+idl-build = ["anchor-lang/idl-build"]
 
 [dependencies]
-anchor-lang = "0.30.1"
-tokio = "1.43.0"
-serde = { version = "1.0.204", features = ["derive"] }
+anchor-lang = { version = "0.30.1", features = ["idl-build"] }
 
-[lints.rust]
-unexpected_cfgs = { level = "warn", check-cfg = ['cfg(has_foo)'] }
