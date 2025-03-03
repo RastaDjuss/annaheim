@@ -1,0 +1,107 @@
+use anchor_lang::prelude::*;
+
+declare_id!("8vBaXtoP9dBt97jA9FQz9NyuchRpFWEuiLxLLj7MYbnQ");
+
+#[program]
+pub mod self_custodial_facebook {
+    use super::*;
+
+    pub fn create_facebook(
+        ctx: Context<Initialize>,
+        name: String,
+        status: String,
+        twitter: String,
+    ) -> Result<()> {
+        let users_account_data = &mut ctx.accounts.facebook_account;
+        users_account_data.bump = ctx.bumps.facebook_account;
+
+        users_account_data.authority = *ctx.accounts.signer.key;
+        users_account_data.name = name.to_owned();
+        users_account_data.status = status.to_owned();
+        users_account_data.twitter = twitter.to_owned();
+
+        msg!(
+            "Created a new account with the following details:
+            Name: {}
+            Status: {}
+            Twitter: {}",
+            name, status, twitter
+        );
+
+        Ok(())
+    }
+
+    pub fn update_status(ctx: Context<Update>, new_status: String) -> Result<()> {
+        msg!(
+            "Updating status from {} to {}",
+            &ctx.accounts.facebook_account.status,
+            &new_status
+        );
+        ctx.accounts.facebook_account.status = new_status;
+
+        Ok(())
+    }
+
+    pub fn delete_account(_ctx: Context<Close>) -> Result<()> {
+        msg!("Account Closed successfully");
+        Ok(())
+    }
+}
+
+#[derive(Accounts)]
+pub struct Initialize<'info> {
+    #[account(mut)]
+    pub signer: Signer<'info>,
+    #[account(
+        init,
+        payer = signer,
+        space = FacebookAccount::LEN,
+        seeds = ["self-custodial-facebook2".as_bytes(), signer.key().as_ref()],
+        bump,
+    )]
+    pub facebook_account: Account<'info, FacebookAccount>,
+    pub system_program: Program<'info, System>,
+}
+
+#[derive(Accounts)]
+pub struct Update<'info> {
+    #[account(mut)]
+    pub signer: Signer<'info>,
+    #[account(
+        mut,
+        seeds = ["self-custodial-facebook2".as_bytes(), signer.key().as_ref()],
+        bump = facebook_account.bump,
+    )]
+    pub facebook_account: Account<'info, FacebookAccount>,
+}
+
+#[derive(Accounts)]
+pub struct Close<'info> {
+    #[account(mut)]
+    pub signer: Signer<'info>,
+    #[account(
+        mut,
+        seeds = ["self-custodial-facebook2".as_bytes(), signer.key().as_ref()],
+        bump = facebook_account.bump,
+        close = signer
+    )]
+    pub facebook_account: Account<'info, FacebookAccount>,
+}
+
+#[account]
+pub struct FacebookAccount {
+    pub authority: Pubkey,
+    pub bump: u8,
+    pub name: String,
+    pub status: String,
+    pub twitter: String,
+}
+
+impl FacebookAccount {
+    pub const LEN: usize = 8 + // discriminator
+        32 + // Pubkey
+        1 +  // bump
+        (4 + 10) + // 10 chars of Name
+        (4 + 100) + // 100 chars of Status
+        (4 + 10); // 10 chars of Twitter
+}
