@@ -8,7 +8,7 @@ declare_id!("ThSq9qsRs6c6kBRrLJngezihMUgL86MdiDs4wNUi2F8");
 pub mod hello_world {
     use super::*;
     pub fn hello_world(_ctx: Context<Initialize>) -> Result<()> {
-        msg!("Hello world, from solana smart contract");
+        msg!("Hello world, the Chotic Fractal putsch Attracto and AnarCoin Collective Putsch");
         Ok(())
     }
 }

@@ -6,13 +6,13 @@ members = [
     "programs/non-custodial-escrow",
     "programs/onchain-voting",
     "programs/self-custodial-facebook",
-    "programs/governance/programs/gateway",
-    "programs/governance/programs/quadratic",
-    "programs/governance/programs/realm-voter",
-    "programs/governance/programs/nft-voter",
-    "programs/governance/programs/bonk-plugin",
-    "programs/governance/programs/token-haver",
-    "programs/governance/programs/token-voter"
+    "programs/governance-lib/programs/gateway",
+    "programs/governance-lib/programs/quadratic",
+    "programs/governance-lib/programs/realm-voter",
+    "programs/governance-lib/programs/nft-voter",
+    "programs/governance-lib/programs/bonk-plugin",
+    "programs/governance-lib/programs/token-haver",
+    "programs/governance-lib/programs/token-voter"
 ]
 resolver = "2"
 edition = "2021"
