@@ -1,6 +1,6 @@
 [submodule "anchor/programs/governance"]
 	path = anchor/programs/governance-lib
 	url = git@github.com:RastaDjuss/governance-program-library.git
-	[submodule "annaheim"]
-    	path = annaheim
-    	url = git@github.com:RastaDjuss/annaheim.git
+	[submodule "Mannheim"]
+    	path = Mannheim
+    	url = git@github.com:RastaDjuss/Mannheim.git
