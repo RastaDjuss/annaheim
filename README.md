@@ -1,116 +1,96 @@
-# Ana-Chain
+# legacy-annaheim
 
-Ana-Chain is a fullstack social application using Solana as a backend for decentralized governance.
+## Getting Started
 
----
+### Prerequisites
 
-### **Setup Commands Using `pnpm`**
+- Node v18.18.0 or higher
 
-Once the repository has been cloned, you can use `pnpm` commands to streamline development and build tasks. `pnpm` is a fast and efficient package manager, ideal for managing dependencies in a complex project.
+- Rust v1.77.2 or higher
+- Anchor CLI 0.30.1 or higher
+- Solana CLI 1.18.17 or higher
 
-Here is the list of key commands:
+### Installation
 
----
+#### Clone the repo
 
-### **Global Commands**
-
-#### **`pnpm install`**
-- Installs all the dependencies required for the project.
-- This includes both frontend (`web`) and backend (`anchor`) dependencies, preparing the entire project in one step.
-- **Note:** This process may take some time as it installs all dependencies for the fullstack project. You can monitor the progress in your terminal.
-
-#### **`pnpm dev`**
-- Starts the development server for the frontend React application with live reload enabled.
-- Ideal for fast-paced development and real-time previews.
-
-#### **`pnpm build`**
-- Compiles and builds the frontend application for production. The final files are placed in the `out` directory.
-
-#### **`pnpm start`**
-- Runs the production version of the frontend application, perfect for local verification before deployment.
-
----
-
-### **Anchor-Related Commands**
-
-#### **`pnpm anchor`**
-- Allows you to run any Anchor CLI command directly from the root directory. Equivalent to navigating to the `anchor` directory and running the Anchor command.
-
-Example:
-```bash
-pnpm anchor build
+```shell
+git clone <repo-url>
+cd <repo-name>
 ```
 
-#### **`pnpm anchor:build`**
-- Compiles the Solana program in the `anchor` directory using `anchor build`.
-- Useful if you want to build your smart contract manually without running the entire dev flow.
+#### Install Dependencies
 
-#### **`pnpm anchor-localnet`**
-- Starts a local Solana validator and deploys the Anchor program to it.
-- This is crucial for testing programs locally without relying on external networks.
-
-#### **`pnpm anchor-test`**
-- Runs tests for the Solana program using Anchor's built-in test framework.
-
-#### **`pnpm anchor-deploy`**
-- Deploys the current program onto the specified Solana blockchain configured in the `Anchor.toml` file.
-
----
-
-### **Miscellaneous Commands**
-
-#### **`pnpm lint-init`**
-- Initializes ESLint for the project setup.
-
-#### **`pnpm lint`**
-- Runs ESLint and fixes style issues in `.js`, `.ts`, and `.tsx` files.
-
----
-
-### **Project-Specific Dependency Installation**
-
-#### **Frontend (governance-ui)**
-To install dependencies specific to the frontend located in the `governance-ui` folder, use the following command:
-
-```bash
-pnpm gov-ui-install
-```
-
-This command navigates into the `governance-ui` directory and installs all its necessary dependencies using `pnpm install`.
-
----
-
-### **Quick Instructions**
-
-#### Install dependencies:
-```bash
+```shell
 pnpm install
 ```
 
-#### Start the project in development mode:
-```bash
+#### Start the web app
+
+```
 pnpm dev
 ```
 
-#### Compile the Anchor program:
-```bash
-pnpm anchor:build
+## Apps
+
+### anchor
+
+This is a Solana program written in Rust using the Anchor framework.
+
+#### Commands
+
+You can use any normal anchor commands. Either move to the `anchor` directory and run the `anchor` command or prefix the
+command with `pnpm`, eg: `pnpm anchor`.
+
+#### Sync the program id:
+
+Running this command will create a new keypair in the `anchor/target/deploy` directory and save the address to the
+Anchor config file and update the `declare_id!` macro in the `./src/lib.rs` file of the program.
+
+You will manually need to update the constant in `anchor/lib/counter-exports.ts` to match the new program id.
+
+```shell
+pnpm anchor keys sync
 ```
 
-#### Start a local Solana network:
-```bash
+#### Build the program:
+
+```shell
+pnpm anchor-build
+```
+
+#### Start the test validator with the program deployed:
+
+```shell
 pnpm anchor-localnet
 ```
 
----
+#### Run the tests
 
-## **Available Applications**
+```shell
+pnpm anchor-test
+```
 
-### **Anchor**
-- This is a Solana program written in Rust using the Anchor framework.
-- You can run all standard Anchor commands by either navigating to the `anchor` directory or prefixing your Anchor commands with `pnpm`.
+#### Deploy to Devnet
 
-Example:
-```bash
-pnpm anchor build
+```shell
+pnpm anchor deploy --provider.cluster devnet
+```
+
+### web
+
+This is a React app that uses the Anchor generated client to interact with the Solana program.
+
+#### Commands
+
+Start the web app
+
+```shell
+pnpm dev
+```
+
+Build the web app
+
+```shell
+pnpm build
 ```

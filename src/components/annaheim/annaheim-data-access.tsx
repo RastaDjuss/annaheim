@@ -1,6 +1,6 @@
 'use client'
 
-import { getAnaheimProgram, getAnaheimProgramId } from '@project/anchor'
+import { getAnnaheimProgram, getAnnaheimProgramId } from '@project/anchor'
 import { useConnection } from '@solana/wallet-adapter-react'
 import { Cluster, Keypair, PublicKey } from '@solana/web3.js'
 import { useMutation, useQuery } from '@tanstack/react-query'
@@ -15,8 +15,8 @@ export function useAnnaheimProgram() {
   const { cluster } = useCluster()
   const transactionToast = useTransactionToast()
   const provider = useAnchorProvider()
-  const programId = useMemo(() => getAnaheimProgramId(cluster.network as Cluster), [cluster])
-  const program = useMemo(() => getAnaheimProgram(provider, programId), [provider, programId])
+  const programId = useMemo(() => getAnnaheimProgramId(cluster.network as Cluster), [cluster])
+  const program = useMemo(() => getAnnaheimProgram(provider, programId), [provider, programId])
 
   const accounts = useQuery({
     queryKey: ['annaheim', 'all', { cluster }],
