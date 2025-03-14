@@ -1,0 +1,52 @@
+--
+-- PostgreSQL database dump
+--
+
+-- Dumped from database version 16.8 (Ubuntu 16.8-0ubuntu0.24.04.1)
+-- Dumped by pg_dump version 16.8 (Ubuntu 16.8-0ubuntu0.24.04.1)
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
+
+--
+-- Data for Name: users; Type: TABLE DATA; Schema: public; Owner: anarcrypt
+--
+
+COPY public.users (id, username, password_hash, email, created_at) FROM stdin;
+\.
+
+
+--
+-- Data for Name: transactions; Type: TABLE DATA; Schema: public; Owner: anarcrypt
+--
+
+COPY public.transactions (id, user_id, amount, transaction_type, created_at) FROM stdin;
+\.
+
+
+--
+-- Name: transactions_id_seq; Type: SEQUENCE SET; Schema: public; Owner: anarcrypt
+--
+
+SELECT pg_catalog.setval('public.transactions_id_seq', 1, false);
+
+
+--
+-- Name: users_id_seq; Type: SEQUENCE SET; Schema: public; Owner: anarcrypt
+--
+
+SELECT pg_catalog.setval('public.users_id_seq', 1, false);
+
+
+--
+-- PostgreSQL database dump complete
+--
+

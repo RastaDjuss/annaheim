@@ -1,5 +1,7 @@
+'use client';
+
 import React from "react";
-import PostCard from "../../components/feed/feed-ui/PostCard";
+import PostCard from "../../components/feed/PostCard";
 import NewPostFeature from "../../components/feed/new-post-feature";
 
 const MOCK_POSTS = [
@@ -43,6 +45,5 @@ const FeedPage = () => {
         </div>
     );
 };
-
 
 export default FeedPage;

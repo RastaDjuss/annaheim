@@ -2,6 +2,7 @@
   "name": "legacy-next-tailwind-counter",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "anchor": "cd anchor && anchor",
     "anchor-build": "cd anchor && anchor build",
@@ -16,6 +17,7 @@
   "dependencies": {
     "@bonfida/utils": "^0.0.7",
     "@coral-xyz/anchor": "0.30.1",
+    "@prisma/client": "^6.5.0",
     "@solana/spl-token": "0.4.12",
     "@solana/wallet-adapter-base": "0.9.23",
     "@solana/wallet-adapter-react": "0.15.35",
@@ -28,7 +30,9 @@
     "dotenv": "^16.4.7",
     "jotai": "^2.12.1",
     "next": "14.2.24",
+    "pg": "^8.14.0",
     "pnpm": "^10.6.3",
+    "prisma": "^6.5.0",
     "react": "^18",
     "react-dom": "^18",
     "react-hot-toast": "^2.5.2"
@@ -54,8 +58,12 @@
       "utf-8-validate"
     ],
     "onlyBuiltDependencies": [
+      "@prisma/client",
+      "@prisma/engines",
       "bigint-buffer",
       "bufferutil",
+      "esbuild",
+      "prisma",
       "utf-8-validate"
     ]
   }
