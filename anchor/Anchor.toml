@@ -6,8 +6,6 @@ resolution = true
 skip-lint = false
 
 [programs.localnet]
-journal = "94L2mJxVu6ZMmHaGsCHRQ65Kk2mea6aTnwWjSdfSsmBC"
-onchain_voting = "AkN2PoD2JrWyYzmB6FEbWBncQbsMxhYH5otfmQJFMsdC"
 anaheim = "coUnmi3oBUtwtd9fjeAvSsJssXh5A5xyPbhpewyzRVF"
 
 [registry]
