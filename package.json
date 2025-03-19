@@ -8,14 +8,13 @@
     "anchor-build": "cd anchor && anchor build",
     "anchor-localnet": "cd anchor && anchor localnet",
     "anchor-test": "cd anchor && anchor test",
-    "dev": "next dev",
-    "build": "next build",
+    "dev": "nx next:dev",
+    "build": "nx next:build",
     "ci": "npm run build",
-    "start": "next start",
+    "start": "nx next:start",
     "lint": "next lint"
   },
   "dependencies": {
-    "@bonfida/utils": "^0.0.7",
     "@coral-xyz/anchor": "0.30.1",
     "@prisma/client": "^6.5.0",
     "@solana/spl-token": "0.4.12",
@@ -23,33 +22,38 @@
     "@solana/wallet-adapter-react": "0.15.35",
     "@solana/wallet-adapter-react-ui": "0.9.35",
     "@solana/web3.js": "1.98.0",
-    "@tabler/icons-react": "^3.30.0",
-    "@tanstack/react-query": "^5.66.9",
-    "@tanstack/react-query-next-experimental": "^5.66.9",
+    "@tabler/icons-react": "^3.31.0",
+    "@tanstack/react-query": "^5.68.0",
+    "@tanstack/react-query-next-experimental": "^5.68.0",
     "daisyui": "^4.12.24",
     "dotenv": "^16.4.7",
-    "jotai": "^2.12.1",
+    "jotai": "^2.12.2",
     "next": "14.2.24",
-    "pg": "^8.14.0",
-    "pnpm": "^10.6.3",
+    "pg": "^8.14.1",
+    "pnpm": "^10.6.4",
     "prisma": "^6.5.0",
-    "react": "^18",
-    "react-dom": "^18",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
     "react-hot-toast": "^2.5.2"
   },
   "devDependencies": {
     "@types/bn.js": "^5.1.6",
     "@types/jest": "^29.5.14",
-    "@types/node": "^22",
-    "@types/react": "^18",
-    "@types/react-dom": "^18",
-    "eslint": "^8",
+    "@types/node": "^22.13.10",
+    "@types/react": "^18.3.18",
+    "@types/react-dom": "^18.3.5",
+    "eslint": "^9.22.0",
     "eslint-config-next": "14.2.24",
     "jest": "^29.7.0",
-    "postcss": "^8",
-    "tailwindcss": "^3.4.1",
+    "postcss": "^8.5.3",
+    "tailwindcss": "^3.4.17",
     "ts-jest": "^29.2.6",
-    "typescript": "5.4.5"
+    "ts-node": "^10.9.2",
+    "typescript": "5.4.5",
+    "nx": "20.6.1",
+    "@nx/eslint": "20.6.1",
+    "@nx/jest": "20.6.1",
+    "@nx/next": "20.6.1"
   },
   "pnpm": {
     "ignoredBuiltDependencies": [
@@ -66,5 +70,6 @@
       "prisma",
       "utf-8-validate"
     ]
-  }
+  },
+  "nx": {}
 }
