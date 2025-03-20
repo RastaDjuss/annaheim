@@ -1,3 +1,3 @@
-[submodule "rustdesk-server"]
-	path = rustdesk-server
-	url = git@github.com:rustdesk/rustdesk-server.git
+[submodule "anchor/programs/rustdesk-server"]
+	path = anchor/programs/rustdesk-server
+	url = https://github.com/rustdesk/rustdesk-server.git
