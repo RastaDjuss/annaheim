@@ -1,0 +1,3 @@
+[submodule "rustdesk-server"]
+	path = rustdesk-server
+	url = git@github.com:rustdesk/rustdesk-server.git
