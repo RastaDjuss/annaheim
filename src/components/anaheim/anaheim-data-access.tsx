@@ -1,104 +1,80 @@
 'use client'
 
-import { getAnaheimProgram, getAnaheimProgramId } from '@project/anchor'
-import { useConnection } from '@solana/wallet-adapter-react'
-import { Cluster, Keypair, PublicKey } from '@solana/web3.js'
-import { useMutation, useQuery } from '@tanstack/react-query'
-import { useMemo } from 'react'
-import toast from 'react-hot-toast'
-import { useCluster } from '../cluster/cluster-data-access'
-import { useAnchorProvider } from '../solana/solana-provider'
-import { useTransactionToast } from '../ui/ui-layout'
+import React, { useState } from 'react'
+import { useAnaheimProgram } from './hooks/useAnaheimProgram'
+import { useAnaheimAccount } from './hooks/useAnaheimAccount'
+import {Keypair, PublicKey} from '@solana/web3.js'
 
-export function useAnaheimProgram() {
-  const { connection } = useConnection()
-  const { cluster } = useCluster()
-  const transactionToast = useTransactionToast()
-  const provider = useAnchorProvider()
-  const programId = useMemo(() => getAnaheimProgramId(cluster.network as Cluster), [cluster])
-  const program = useMemo(() => getAnaheimProgram(provider, programId), [provider, programId])
+export default function AnaheimFeature() {
+    const { accounts, initialize } = useAnaheimProgram()
+    const [selectedAccount, setSelectedAccount] = useState<PublicKey | null>(null)
+    const programAccount = useAnaheimAccount({ account: selectedAccount! })
 
-  const accounts = useQuery({
-    queryKey: ['anaheim', 'all', { cluster }],
-    queryFn: () => program.account.anaheim.all(),
-  })
+    const handleInitialize = async () => {
+        const newAccount = Keypair.generate() // Generates a new keypair
+        await initialize.mutate(newAccount)
+        setSelectedAccount(newAccount.publicKey)
+    }
 
-  const getProgramAccount = useQuery({
-    queryKey: ['get-program-account', { cluster }],
-    queryFn: () => connection.getParsedAccountInfo(programId),
-  })
+    return (
+        <div>
+            <h1>Anaheim Program</h1>
 
-  const initialize = useMutation({
-    mutationKey: ['anaheim', 'initialize', { cluster }],
-    mutationFn: (keypair: Keypair) =>
-      program.methods.initialize().accounts({ anaheim: keypair.publicKey }).signers([keypair]).rpc(),
-    onSuccess: (signature) => {
-      transactionToast(signature)
-      return accounts.refetch()
-    },
-    onError: () => toast.error('Failed to initialize account'),
-  })
+            {/* Program Accounts */}
+            <div className="accounts">
+                {accounts.data?.length ? (
+                    <ul>
+                        {accounts.data.map((acc: any) => (
+                            <li key={acc.publicKey.toString()}>
+                                <button onClick={() => setSelectedAccount(acc.publicKey)}>Select: {acc.publicKey.toString()}</button>
+                            </li>
+                        ))}
+                    </ul>
+                ) : (
+                    <p>No accounts found</p>
+                )}
+            </div>
 
-  return {
-    program,
-    programId,
-    accounts,
-    getProgramAccount,
-    initialize,
-  }
-}
+            {/* Initialize New Account */}
+            <button onClick={handleInitialize} disabled={initialize.isLoading}>
+                {initialize.isLoading ? 'Loading...' : 'Initialize New Account'}
+            </button>
 
-export function useAnaheimProgramAccount({ account }: { account: PublicKey }) {
-  const { cluster } = useCluster()
-  const transactionToast = useTransactionToast()
-  const { program, accounts } = useAnaheimProgram()
+            {/* Selected Account */}
+            {selectedAccount && (
+                <div>
+                    <h2>Selected Account: {selectedAccount.toString()}</h2>
+                    {!programAccount.accountQuery.data ? (
+                        <p>Loading account...</p>
+                    ) : (
+                        <div>
+                            <p>Current Count: {programAccount.accountQuery.data.count}</p>
 
-  const accountQuery = useQuery({
-    queryKey: ['anaheim', 'fetch', { cluster, account }],
-    queryFn: () => program.account.anaheim.fetch(account),
-  })
+                            {/* Increment */}
+                            <button
+                                onClick={() => programAccount.incrementMutation.mutate()}
+                                disabled={programAccount.incrementMutation.isLoading}
+                            >
+                                {programAccount.incrementMutation.isLoading ? 'Incrementing...' : 'Increment'}
+                            </button>
 
-  const closeMutation = useMutation({
-    mutationKey: ['anaheim', 'close', { cluster, account }],
-    mutationFn: () => program.methods.close().accounts({ anaheim: account }).rpc(),
-    onSuccess: (tx) => {
-      transactionToast(tx)
-      return accounts.refetch()
-    },
-  })
+                            {/* Decrement */}
+                            <button
+                                onClick={() => programAccount.decrementMutation.mutate()}
+                                disabled={programAccount.decrementMutation.isLoading}
+                            >
+                                {programAccount.decrementMutation.isLoading ? 'Decrementing...' : 'Decrement'}
+                            </button>
 
-  const decrementMutation = useMutation({
-    mutationKey: ['anaheim', 'decrement', { cluster, account }],
-    mutationFn: () => program.methods.decrement().accounts({ anaheim: account }).rpc(),
-    onSuccess: (tx) => {
-      transactionToast(tx)
-      return accountQuery.refetch()
-    },
-  })
+                            {/* Set Count */}
+                            <button onClick={() => programAccount.setMutation.mutate(5)}>Set Count to 5</button>
 
-  const incrementMutation = useMutation({
-    mutationKey: ['anaheim', 'increment', { cluster, account }],
-    mutationFn: () => program.methods.increment().accounts({ anaheim: account }).rpc(),
-    onSuccess: (tx) => {
-      transactionToast(tx)
-      return accountQuery.refetch()
-    },
-  })
-
-  const setMutation = useMutation({
-    mutationKey: ['anaheim', 'set', { cluster, account }],
-    mutationFn: (value: number) => program.methods.set(value).accounts({ anaheim: account }).rpc(),
-    onSuccess: (tx) => {
-      transactionToast(tx)
-      return accountQuery.refetch()
-    },
-  })
-
-  return {
-    accountQuery,
-    closeMutation,
-    decrementMutation,
-    incrementMutation,
-    setMutation,
-  }
+                            {/* Close Account */}
+                            <button onClick={() => programAccount.closeMutation.mutate()}>Close Account</button>
+                        </div>
+                    )}
+                </div>
+            )}
+        </div>
+    )
 }

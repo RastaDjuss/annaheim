@@ -1,6 +1,9 @@
 #![allow(clippy::result_large_err)]
 
 use anchor_lang::prelude::*;
+mod core;    // Import core functionality
+mod user;    // Import user-related logic
+mod post;    // Import post-related logic
 
 declare_id!("coUnmi3oBUtwtd9fjeAvSsJssXh5A5xyPbhpewyzRVF");
 
@@ -8,63 +11,31 @@ declare_id!("coUnmi3oBUtwtd9fjeAvSsJssXh5A5xyPbhpewyzRVF");
 pub mod anaheim {
     use super::*;
 
-  pub fn close(_ctx: Context<CloseAnaheim>) -> Result<()> {
-    Ok(())
-  }
+    pub fn close(ctx: Context<CloseAnaheim>) -> Result<()> {
+        core::close(ctx)
+    }
 
-  pub fn decrement(ctx: Context<Update>) -> Result<()> {
-    ctx.accounts.anaheim.count = ctx.accounts.anaheim.count.checked_sub(1).unwrap();
-    Ok(())
-  }
+    pub fn increment(ctx: Context<Update>) -> Result<()> {
+        core::increment(ctx)
+    }
 
-  pub fn increment(ctx: Context<Update>) -> Result<()> {
-    ctx.accounts.anaheim.count = ctx.accounts.anaheim.count.checked_add(1).unwrap();
-    Ok(())
-  }
+    pub fn decrement(ctx: Context<Update>) -> Result<()> {
+        core::decrement(ctx)
+    }
 
-  pub fn initialize(_ctx: Context<InitializeAnaheim>) -> Result<()> {
-    Ok(())
-  }
+    pub fn set(ctx: Context<Update>, value: u8) -> Result<()> {
+        core::set(ctx, value)
+    }
 
-  pub fn set(ctx: Context<Update>, value: u8) -> Result<()> {
-    ctx.accounts.anaheim.count = value.clone();
-    Ok(())
-  }
-}
+    pub fn initialize(ctx: Context<InitializeAnaheim>) -> Result<()> {
+        core::initialize(ctx)
+    }
 
-#[derive(Accounts)]
-pub struct InitializeAnaheim<'info> {
-  #[account(mut)]
-  pub payer: Signer<'info>,
+    pub fn create_user(ctx: Context<CreateUser>, username: String) -> Result<()> {
+        user::create_user(ctx, username)
+    }
 
-  #[account(
-  init,
-  space = 8 + Anaheim::INIT_SPACE,
-  payer = payer
-  )]
-  pub anaheim: Account<'info, Anaheim>,
-  pub system_program: Program<'info, System>,
-}
-#[derive(Accounts)]
-pub struct CloseAnaheim<'info> {
-  #[account(mut)]
-  pub payer: Signer<'info>,
-
-  #[account(
-  mut,
-  close = payer, // close account and return lamports to payer
-  )]
-  pub anaheim: Account<'info, Anaheim>,
-}
-
-#[derive(Accounts)]
-pub struct Update<'info> {
-  #[account(mut)]
-  pub anaheim: Account<'info, Anaheim>,
-}
-
-#[account]
-#[derive(InitSpace)]
-pub struct Anaheim {
-  count: u8,
+    pub fn create_post(ctx: Context<CreatePost>, content: String) -> Result<()> {
+        post::create_post(ctx, content)
+    }
 }
