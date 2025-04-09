@@ -1,80 +1,76 @@
 'use client'
 
 import React, { useState } from 'react'
-import { useWallet } from '@solana/wallet-adapter-react'
-import { WalletButton } from '../solana/solana-provider'
-import { ExplorerLink } from '../cluster/cluster-ui'
-import { AppHero, ellipsify } from '../ui/ui-layout'
-import { useAnaheimAccounts } from './hooks/useAnaheimAccounts'
-import { useAnaheimAccount } from './hooks/useAnaheimAccount'
-import { useAnaheimMutations } from './hooks/useAnaheimMutations'
-
-// Keypair import (always include for new account creation):
 import { Keypair, PublicKey } from '@solana/web3.js'
+import { useAnaheimProgram } from './hooks/useAnaheimProgram'
+import { useAnaheimMutations } from './hooks/useAnaheimMutations'
+import { useAccountQuery } from './hooks/useAccountQuery'
 
 export default function AnaheimFeature() {
-    const { publicKey } = useWallet()
-    const accounts = useAnaheimAccounts()
     const [selectedAccount, setSelectedAccount] = useState<PublicKey | null>(null)
-    const { initialize } = useAnaheimMutations(() => accounts.refetch())
-    const programAccount = useAnaheimAccount(selectedAccount!)
 
-    const handleInitialize = async () => {
-        const newAccount = Keypair.generate()
-        await initialize.mutate(newAccount)
-        setSelectedAccount(newAccount.publicKey)
+// Fetching accounts and initializing accounts.
+    const { accounts: accountsQuery, initialize } = useAnaheimProgram() as unknown as {
+        accounts: {
+            isLoading: boolean;
+            data?: Array<{ publicKey: PublicKey }>;
+        };
+        initialize: any;
     }
 
-    return publicKey ? (
+// Query to fetch account data of the selected account.
+    const { data: accountData, isLoading: accountLoading } = useAccountQuery(selectedAccount ?? undefined)
+
+// Mutations for selected account actions (increment, decrement, etc.).
+    const { incrementMutation, decrementMutation, setMutation, closeMutation } = useAnaheimMutations(selectedAccount)
+    const handleInitialize = async () => {
+        const newKeypair = Keypair.generate()
+        initialize.mutate(newKeypair)
+        setSelectedAccount(newKeypair.publicKey)
+    }
+
+    return (
         <div>
-            <AppHero
-                title="Anaheim Program"
-                subtitle={
-                    'Create a new account by clicking the "Create" button. The state of an account is stored on-chain and can be manipulated by calling the program\'s methods (increment, decrement, set, and close).'
-                }
-            >
-                {accounts.isLoading ? (
-                    <p>Loading accounts...</p>
-                ) : (
-                    <div>
-                        <h2>Program Accounts</h2>
-                        <ul className="accounts">
-                            {accounts.data?.map((acc) => (
-                                <li key={acc.publicKey.toString()}>
-                                    <button onClick={() => setSelectedAccount(acc.publicKey)}>
-                                        {acc.publicKey.toString()}
-                                    </button>
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-                )}
+            <h1>Anaheim Feature</h1>
 
-                <button onClick={handleInitialize} disabled={initialize?.isLoading}>
-                    {initialize?.isLoading ? 'Initializing...' : 'Initialize New Account'}
-                </button>
+            {/* Initialize Button */}
+            <button onClick={handleInitialize}>Initialize Account</button>
 
-                {selectedAccount && programAccount.accountQuery?.data && (
-                    <div>
-                        <h2>Account: {selectedAccount.toString()}</h2>
-                        <p>Count: {programAccount.accountQuery?.data.count}</p>
-                        <button onClick={() => programAccount.increment?.mutate()}>
-                            {programAccount.increment?.isLoading ? 'Loading...' : 'Increment'}
-                        </button>
-                        <button onClick={() => programAccount.decrement?.mutate()}>
-                            {programAccount.decrement?.isLoading ? 'Loading...' : 'Decrement'}
-                        </button>
-                    </div>
-                )}
-            </AppHero>
-        </div>
-    ) : (
-        <div className="max-w-4xl mx-auto">
-            <div className="hero py-[64px]">
-                <div className="hero-content text-center">
-                    <WalletButton />
-                </div>
-            </div>
+            {/* Display All Accounts */}
+            {accountsQuery?.isLoading ? (
+                <p>Loading accounts...</p>
+            ) : (
+                <ul>
+                    {accountsQuery.data?.map((account) => (
+                        <li key={account.publicKey.toBase58()}>
+                            <button onClick={() => setSelectedAccount(account.publicKey)}>
+                                {account.publicKey.toBase58() || 'N/A'}
+                            </button>
+                        </li>
+                    ))}
+                </ul>
+            )}
+
+            {/* Display Selected Account */}
+            {selectedAccount && (
+                <section>
+                    <h2>Selected Account: {selectedAccount.toBase58()}</h2>
+                    {accountLoading ? (
+                        <p>Loading account data...</p>
+                    ) : (
+                        accountData && (
+                            <div>
+                                <p>Current Count: {accountData.count}</p>
+
+                                <button onClick={() => incrementMutation.mutate()}>Increment</button>
+                                <button onClick={() => decrementMutation.mutate()}>Decrement</button>
+                                <button onClick={() => setMutation.mutate(5)}>Set Count to 5</button>
+                                <button onClick={() => closeMutation.mutate()}>Close Account</button>
+                            </div>
+                        )
+                    )}
+                </section>
+            )}
         </div>
     )
 }

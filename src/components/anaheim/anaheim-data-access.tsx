@@ -22,7 +22,7 @@ export default function AnaheimFeature() {
 
             {/* Program Accounts */}
             <div className="accounts">
-                {accounts.data?.length ? (
+                {Array.isArray(accounts.data) && accounts.data.length ? (
                     <ul>
                         {accounts.data.map((acc: any) => (
                             <li key={acc.publicKey.toString()}>
@@ -52,16 +52,16 @@ export default function AnaheimFeature() {
 
                             {/* Increment */}
                             <button
-                                onClick={() => programAccount.incrementMutation.mutate()}
-                                disabled={programAccount.incrementMutation.isLoading}
+                                onClick={() => programAccount.increment.mutate()}
+                                disabled={programAccount.increment.status === 'pending'}
                             >
-                                {programAccount.incrementMutation.isLoading ? 'Incrementing...' : 'Increment'}
+                                {programAccount.increment.status === 'pending' ? 'Incrementing...' : 'Increment'}
                             </button>
 
                             {/* Decrement */}
                             <button
-                                onClick={() => programAccount.decrementMutation.mutate()}
-                                disabled={programAccount.decrementMutation.isLoading}
+                                onClick={() => programAccount.decrement.mutate()}
+                                disabled={programAccount.decrement.isLoading}
                             >
                                 {programAccount.decrementMutation.isLoading ? 'Decrementing...' : 'Decrement'}
                             </button>

@@ -26,15 +26,13 @@
         "name": "next"
       }
     ],
-    "baseUrl": ".",
-    "paths": {
-      "@/*": [
-        "./src/*"
-      ],
-      "@project/anchor": [
-        "anchor/src"
-      ]
-    }
+  "baseUrl": "./src",
+  "paths": {
+    "@/*": ["*"], // Main root alias for the entire source folder
+    "@project/anchor/*": ["anchor/src/*"], // Specific alias for anchor
+    "@/hooks/*": ["hooks/*"], // Alias for hooks
+    "@/utils/*": ["utils/*"] // Alias for utils
+  }
   },
   "include": [
     "next-env.d.ts",

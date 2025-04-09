@@ -1,42 +1,59 @@
-'use client'
-
 import { useMutation } from '@tanstack/react-query'
+import { PublicKey } from '@solana/web3.js'
+import { toast } from 'react-hot-toast'
+import { transactionToast } from '@/components/ui/ui-toast'
 import { useAnaheimProgram } from './useAnaheimProgram'
-import toast from 'react-hot-toast'
-import {Keypair, PublicKey} from '@solana/web3.js'
-import { useTransactionToast } from '@/components/ui/ui-layout'
 
-export function useAnaheimMutations(refetchAccounts: () => void) {
-    const { program, cluster } = useAnaheimProgram()
-    const transactionToast = useTransactionToast()
+// Mutations for interacting with individual accounts
+export function useAnaheimMutations(accountPubkey?: PublicKey | null) {
+    const { program } = useAnaheimProgram()
 
-    const initialize = useMutation({
-        mutationKey: ['anaheim', 'initialize', { cluster }],
-        mutationFn: (keypair: Keypair) =>
-            program.methods
-                .initialize()
-                .accounts({ anaheim: keypair.publicKey })
-                .signers([keypair])
-                .rpc(),
-        onSuccess: (tx) => {
-            transactionToast(tx)
-            refetchAccounts()
+    if (!program) throw new Error('Anaheim Program is not initialized')
+
+    // Mutation: Increment account value
+    const incrementMutation = useMutation({
+        mutationFn: async () => {
+            if (!accountPubkey) throw new Error('Account PublicKey is required')
+            return await program.methods.increment().accounts({ anaheim: accountPubkey }).rpc()
         },
-        onError: () => toast.error('Failed to initialize account'),
+        onSuccess: (tx) => transactionToast(tx),
+        onError: (error: any) => toast.error(`Increment failed: ${error.message || 'Unknown error'}`),
     })
 
-    const closeAccount = useMutation({
-        mutationKey: ['anaheim', 'close', { cluster }],
-        mutationFn: (account: PublicKey) =>
-            program.methods.close().accounts({ anaheim: account }).rpc(),
-        onSuccess: (tx) => {
-            transactionToast(tx)
-            refetchAccounts()
+    // Mutation: Decrement account value
+    const decrementMutation = useMutation({
+        mutationFn: async () => {
+            if (!accountPubkey) throw new Error('Account PublicKey is required')
+            return await program.methods.decrement().accounts({ anaheim: accountPubkey }).rpc()
         },
+        onSuccess: (tx) => transactionToast(tx),
+        onError: (error: any) => toast.error(`Decrement failed: ${error.message || 'Unknown error'}`),
+    })
+
+    // Mutation: Set custom value
+    const setMutation = useMutation({
+        mutationFn: async (newCount: number) => {
+            if (!accountPubkey) throw new Error('Account PublicKey is required')
+            return await program.methods.setCount(newCount).accounts({ anaheim: accountPubkey }).rpc()
+        },
+        onSuccess: (tx) => transactionToast(tx),
+        onError: (error: any) => toast.error(`Set count failed: ${error.message || 'Unknown error'}`),
+    })
+
+    // Mutation: Close the account
+    const closeMutation = useMutation({
+        mutationFn: async () => {
+            if (!accountPubkey) throw new Error('Account PublicKey is required')
+            return await program.methods.close().accounts({ anaheim: accountPubkey }).rpc()
+        },
+        onSuccess: (tx) => transactionToast(tx),
+        onError: (error: any) => toast.error(`Account closing failed: ${error.message || 'Unknown error'}`),
     })
 
     return {
-        initialize,
-        closeAccount,
+        incrementMutation,
+        decrementMutation,
+        setMutation,
+        closeMutation,
     }
 }
