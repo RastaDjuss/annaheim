@@ -1,25 +1,68 @@
 use anchor_lang::prelude::*;
-use crate::Anaheim;
 
-pub fn increment(ctx: Context<Update>) -> Result<()> {
-    ctx.accounts.anaheim.count = ctx.accounts.anaheim.count.checked_add(1).unwrap();
-    Ok(())
+
+#[program]
+pub mod anaheim {
+    use super::*;
+
+    pub fn initialize(ctx: Context<InitializeAnaheim>) -> Result<()> {
+        let anaheim = &mut ctx.accounts.anaheim;
+        anaheim.data = 0;
+        Ok(())
+    }
+
+    pub fn close(ctx: Context<CloseAnaheim>) -> Result<()> {
+        core::close(ctx)
+    }
+
+    pub fn increment(ctx: Context<Update>) -> Result<()> {
+        core::increment(ctx)
+    }
+
+    pub fn decrement(ctx: Context<Update>) -> Result<()> {
+        core::decrement(ctx)
+    }
+
+    pub fn set(ctx: Context<Update>, value: u8) -> Result<()> {
+        core::set(ctx, value)
+    }
 }
 
-pub fn decrement(ctx: Context<Update>) -> Result<()> {
-    ctx.accounts.anaheim.count = ctx.accounts.anaheim.count.checked_sub(1).unwrap();
-    Ok(())
+// Main Anaheim account
+#[account]
+pub struct Anaheim {
+    pub data: u64, // Represents the state of Anaheim
 }
 
-pub fn set(ctx: Context<Update>, value: u8) -> Result<()> {
-    ctx.accounts.anaheim.count = value;
-    Ok(())
+// Context for initializing `Anaheim`
+#[derive(Accounts)]
+pub struct InitializeAnaheim<'info> {
+    #[account(
+        init,
+        payer = user,
+        space = 8 + 8 // 8 bytes discriminator + 8 bytes for data
+    )]
+    pub anaheim: Account<'info, Anaheim>,
+    #[account(mut)]
+    pub user: Signer<'info>,
+    pub system_program: Program<'info, System>,
 }
 
-pub fn initialize(_ctx: Context<InitializeAnaheim>) -> Result<()> {
-    Ok(())
+// Context for closing the `Anaheim` account
+#[derive(Accounts)]
+pub struct CloseAnaheim<'info> {
+    #[account(mut, close = user)] // Closing the Anaheim account refunds lamports to user
+    pub anaheim: Account<'info, Anaheim>,
+    #[account(mut)]
+    pub user: Signer<'info>,
 }
 
-pub fn close(_ctx: Context<CloseAnaheim>) -> Result<()> {
-    Ok(())
+// Context for updating the `Anaheim` account
+#[derive(Accounts)]
+pub struct Update<'info> {
+    #[account(mut)]
+    pub anaheim: Account<'info, Anaheim>, // The Anaheim account being updated
+    #[account(mut)]
+    pub user: Signer<'info>, // The signer making the update
+    pub system_program: Program<'info, System>,
 }

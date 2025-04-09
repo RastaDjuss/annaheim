@@ -26,13 +26,28 @@
         "name": "next"
       }
     ],
-  "baseUrl": "./src",
-  "paths": {
-    "@/*": ["*"], // Main root alias for the entire source folder
-    "@project/anchor/*": ["anchor/src/*"], // Specific alias for anchor
-    "@/hooks/*": ["hooks/*"], // Alias for hooks
-    "@/utils/*": ["utils/*"] // Alias for utils
-  }
+    "baseUrl": "./", // Project root, which is where tsconfig.json is located
+    "paths": {
+      "@/*": [
+        "src/*"
+      ],
+      "@/hooks/*": [
+        "src/hooks/*"
+      ],
+      "@/components/*": [
+        "src/components/*"
+      ],
+      "@/utils/*": [
+        "src/utils/*"
+      ], // Add other folders as needed
+      "@/types/*": [
+        "src/components/anaheim/types/*"
+      ], // For type shortcuts
+      "@project/anchor/*": [
+        "anchor/target/*"
+      ]
+    },
+    "target": "ES2017"
   },
   "include": [
     "next-env.d.ts",

@@ -1,35 +1,49 @@
-'use client'
-
-import { useQuery, useMutation } from '@tanstack/react-query'
-import { useAnaheimProgram } from './useAnaheimProgram'
-import { PublicKey } from '@solana/web3.js'
-import toast from 'react-hot-toast'
-import { useTransactionToast } from '@/components/ui/ui-layout'
+import { PublicKey } from "@solana/web3.js";
+import { useAnaheimProgram } from "./useAnaheimProgram";
+import {useTransactionToast} from "@/components/ui/ui-layout";
+import {useMutation, useQuery} from "@tanstack/react-query";
+import toast from "react-hot-toast";
 
 export function useAnaheimAccount(account: { account: PublicKey }) {
-    const { program, cluster } = useAnaheimProgram()
+    const { program } = useAnaheimProgram();
+    const cluster = process.env.NEXT_PUBLIC_CLUSTER || 'default-cluster';
     const transactionToast = useTransactionToast()
 
     const accountQuery = useQuery({
-        queryKey: ['anaheim', 'fetch', { cluster, account }],
-        queryFn: () => program.account.anaheim.fetch(account),
+        queryKey: ['anaheim', 'fetch', {cluster, account}],
+        queryFn: () => {
+            if (!program) {
+                throw new Error('Program is not initialized');
+            }
+            return program.account.anaheim.fetch(account);
+        },
     })
 
     const increment = useMutation({
-        mutationKey: ['anaheim', 'increment', { cluster, account }],
-        mutationFn: () => program.methods.increment().accounts({ anaheim: account }).rpc(),
+        mutationKey: ['anaheim', 'increment', {cluster, account}],
+        mutationFn: () => {
+            if (!program) {
+                throw new Error('Program is not initialized');
+            }
+            return program.methods.increment().accounts({anaheim: account}).rpc();
+        },
         onSuccess: (tx) => {
-            transactionToast(tx)
+            transactionToast(tx as string)
             return accountQuery.refetch()
         },
         onError: () => toast.error('Failed to increment count'),
     })
 
     const decrement = useMutation({
-        mutationKey: ['anaheim', 'decrement', { cluster, account }],
-        mutationFn: () => program.methods.decrement().accounts({ anaheim: account }).rpc(),
+        mutationKey: ['anaheim', 'decrement', {cluster, account}],
+        mutationFn: () => {
+            if (!program) {
+                throw new Error('Program is not initialized');
+            }
+            return program.methods.decrement().accounts({anaheim: account}).rpc();
+        },
         onSuccess: (tx) => {
-            transactionToast(tx)
+            transactionToast(tx as string)
             return accountQuery.refetch()
         },
         onError: () => toast.error('Failed to decrement count'),

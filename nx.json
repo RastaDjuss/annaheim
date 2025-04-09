@@ -1,44 +1,76 @@
 {
   "$schema": "./node_modules/nx/schemas/nx-schema.json",
+  "tasksRunnerOptions": {
+    "default": {
+      "options": {
+        "nxCloud": false
+      }
+    }
+  },
+  "workspaceLayout": {
+    "appsDir": "apps",
+    "libsDir": "libs"
+  },
   "targetDefaults": {
     "anchor-build": {
       "outputs": [
-        "{projectRoot}/build"
+        "{projectRoot}/y"
       ],
       "cache": true
     },
     "anchor-test": {
       "outputs": [
-        "{projectRoot}/coverage"
+        "{projectRoot}/y"
       ],
       "cache": true
     },
     "dev": {
       "outputs": [
-        "{projectRoot}/build"
+        "{projectRoot}/y"
       ],
       "cache": true
     },
     "build": {
       "outputs": [
-        "{projectRoot}/buiold"
+        "{projectRoot}/y"
       ],
       "cache": true
     },
     "anchor": {
-      "cache": true
+      "cache": true,
+      "outputs": [
+        "{projectRoot}/y"
+      ]
     },
     "anchor-localnet": {
-      "cache": true
+      "cache": true,
+      "outputs": [
+        "{projectRoot}/y"
+      ]
     },
     "ci": {
-      "cache": true
+      "cache": true,
+      "outputs": [
+        "{projectRoot}/y"
+      ]
     },
     "start": {
-      "cache": true
+      "cache": true,
+      "outputs": [
+        "{projectRoot}/y"
+      ]
     },
     "lint": {
-      "cache": true
+      "cache": true,
+      "outputs": [
+        "{projectRoot}/y"
+      ]
+    },
+    "test": {
+      "cache": true,
+      "outputs": [
+        "{projectRoot}/y"
+      ]
     }
   },
   "defaultBase": "master",

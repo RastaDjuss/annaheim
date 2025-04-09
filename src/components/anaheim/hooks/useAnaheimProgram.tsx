@@ -1,103 +1,104 @@
-'use client'
-import './environment' // Ensure environment variables are loaded for the correct paths.
-import { useMemo } from 'react'
-import { useAnchorWallet } from '@solana/wallet-adapter-react'
-import { Program, AnchorProvider } from '@project-serum/anchor'
-import { Connection, PublicKey, Keypair } from '@solana/web3.js'
-import { useQuery, useMutation } from '@tanstack/react-query'
-import toast from 'react-hot-toast'
-import {IdlTypes, ProgramAccount} from "@coral-xyz/anchor";
-import { TypeDef } from '@coral-xyz/anchor/dist/cjs/program/namespace/types'
-import {IdlAccountDef} from "@project-serum/anchor/dist/cjs/idl";
-// Import IDL location (adjust based on your folder structure)
-import rawIdl from '../../../../anchor/target/idl/anaheim.json' assert { type: 'json' }
+'use client';
 
-const idl = { ...rawIdl, version: rawIdl.metadata.version, name: rawIdl.metadata.name };
+// Path: src/components/anaheim/hooks/useAnaheimProgram.tsx
+import { useAnchorWallet } from '@solana/wallet-adapter-react';
+import { useQuery, UseQueryOptions } from '@tanstack/react-query';
+import toast from 'react-hot-toast';
+import { Command } from 'commander';
+import 'commander/types';
+import { fetchAnaheimAccounts as fetchAnaheimAccountsUtil } from '../utils/fetchAnaheimAccounts';
+import { IdlErrorCode, IdlEvent, IdlField, IdlTypeDef } from '@coral-xyz/anchor/dist/cjs/idl';
+import { IdlAccountItem, IdlTypeDefStruct } from '@project-serum/anchor/dist/cjs/idl';
 
-function useAnaheimQuery(param: {
-    initialData: undefined;
-    queryKey: string[];
-    queryFn: () => Promise<ProgramAccount<TypeDef<({
-        address: string,
-        metadata: { name: string, version: string, spec: string, description: string },
-        instructions: {},
-        accounts: {},
-        types: {}
-    } & { version: string; name: string })["accounts"] extends undefined ? IdlAccountDef : NonNullable<({
-        address: string,
-        metadata: { name: string, version: string, spec: string, description: string },
-        instructions: {},
-        accounts: {},
-        types: {}
-    } & { version: string; name: string })["accounts"]>[number], IdlTypes<{
-        address: string,
-        metadata: { name: string, version: string, spec: string, description: string },
-        instructions: {},
-        accounts: {},
-        types: {}
-    } & { version: string; name: string }>>>[]>;
+const program = new Command(); // Initialize Commander.js' Command object
 
-    enabled: boolean
-}, param2: { onError: (error: any) => void }) {
-
+// Utility function to cast raw accounts data to proper AnaheimAccount type
+function castToAnaheimAccount(accounts: any[]): AnaheimAccount[] {
+    return accounts.map((account) => ({
+        publicKey: account.publicKey,
+        balance: account.balance ?? 0,
+        isActive: account.isActive ?? false,
+    }));
 }
 
+// Query options for accounts
+const queryOptions: UseQueryOptions<AnaheimAccount[], Error> & {
+    onSuccess?: (data: AnaheimAccount[]) => void;
+    onError?: (error: Error) => void;
+} = {
+    queryKey: ['anaheim', 'accounts'],
+    queryFn: async (): Promise<AnaheimAccount[]> => {
+        if (!program) throw new Error('Program is not initialized');
+        return await fetchAnaheimAccountsUtil(program).then((accounts: any[]) =>
+            castToAnaheimAccount(accounts)
+        );
+    },
+    enabled: !!program, // Enable only if program exists
+    onSuccess: (data: AnaheimAccount[]) => {
+        console.log('Successfully fetched accounts:', data);
+    },
+    onError: (error: Error) => {
+        toast.error(`Error fetching accounts: ${error.message}`);
+    },
+};
+
+// Execute query to fetch accounts
+const accountsQuery = useQuery(queryOptions);
+
+// Fetch Anaheim accounts function
+export async function fetchAnaheimAccounts(program: any): Promise<AnaheimAccount[]> {
+    const accounts = await program.account.anaheimAccount.all();
+    // Map accounts to the proper type
+    return accounts.map((account: any) => ({
+        publicKey: account.publicKey.toBase58(),
+        balance: account.data.balance ?? 0, // Ensure balance is defined
+        isActive: account.data.isActive ?? false, // Ensure isActive is defined
+    }));
+}
+
+// Define the AnaheimAccount type
+export interface AnaheimAccount {
+    publicKey: string;
+    balance: number;
+    isActive: boolean;
+}
+
+// Define the Idl type and others
+export interface Idl {
+    version: string; // Program version
+    name: string; // Program name
+    metadata?: { [key: string]: string }; // Custom metadata
+    instructions: IdlInstruction[]; // Instructions
+    accounts?: IdlAccount[]; // Accounts
+    types?: IdlTypeDef[]; // Optional custom types
+    events?: IdlEvent[]; // Optional program events
+    errors?: IdlErrorCode[]; // Optional custom errors
+}
+
+export interface IdlAccount {
+    name: string;
+    type: IdlTypeDefStruct;
+}
+
+export interface IdlInstruction {
+    name: string;
+    accounts: IdlAccountItem[];
+    args: IdlField[];
+}
+
+export interface IdlMetadata {
+    [key: string]: string;
+}
+
+// useAnaheimProgram hook
 export function useAnaheimProgram() {
-    const wallet = useAnchorWallet()
+    // Wallet from Anchor Wallet Adapter
+    const wallet = useAnchorWallet();
 
-    const programId = useMemo(() => {
-        const programAddress = process.env.NEXT_PUBLIC_PROGRAM_ID
-        return programAddress ? new PublicKey(programAddress) : null
-    }, [])
+    // Add logic for initializing the program (if necessary)
+    console.log('Wallet:', wallet);
+    console.log('Program:', program);
 
-    const program = useMemo(() => {
-        if (wallet && programId) {
-            const rpcUrl = process.env.NEXT_PUBLIC_RPC_URL
-            if (!rpcUrl) throw new Error('RPC URL is not set')
-            const connection = new Connection(rpcUrl, 'processed')
-            const provider = new AnchorProvider(connection, wallet, { preflightCommitment: 'processed' })
-            return new Program(idl, programId, provider)
-        }
-        return null
-    }, [wallet, programId])
-
-    const accounts = useAnaheimQuery({
-        initialData: undefined,
-        queryKey: ['anaheim', 'accounts'],
-        queryFn: async () => {
-            if (!program) throw new Error('Program is not initialized');
-            return await program.account.anaheim.all();
-        },
-        enabled: !!program,
-    }, {
-        onError: (error: any) => {
-            toast.error(`Failed to fetch accounts: ${error?.message || error}`);
-        }
-    });
-
-    const initialize = useMutation({
-        mutationFn: async (keypair: Keypair) => {
-            if (!program) throw new Error('Program is not available')
-            return await program.methods
-                .initialize()
-                .accounts({
-                    anaheim: keypair.publicKey,
-                })
-                .signers([keypair])
-                .rpc()
-        },
-        onSuccess: (tx) => {
-            toast.success(`Successfully initialized account: ${tx}`)
-            accounts.refetch()
-        },
-        onError: (error) => {
-            toast.error(`Failed to initialize account: ${error.message || error}`)
-        },
-    })
-
-    return {
-        program,
-        accounts,
-        initialize,
-    }
-}
+    // Return wallet and program safely
+    return { wallet, program };
+} // <-- Ensure this closing brace ends your function properly
