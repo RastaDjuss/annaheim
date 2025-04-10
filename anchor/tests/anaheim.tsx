@@ -11,7 +11,7 @@ const AnaheimIdl: Idl = AnaheimIdlJson as Idl; // Use IDL JSON at runtime
  // Ensure the file exists and is named 'anaheim.tsx' (not .tsx)
 import {SystemProgram} from "@solana/web3.js";
 
-const tx = await (workspace.Anaheim as Program<AnaheimType>).methods
+const tx = await (workspace.Anaheim as Program<typeof AnaheimIdl>).methods
     .createUser({ username: "ValidUsername" })
     .accounts({
         user: AnchorProvider.local().wallet.publicKey,
@@ -24,8 +24,7 @@ function before(param: () => Promise<void>) {
 
 }
 export type Anaheim = {
-    data: number
-    authority: string
+
 }
 describe("anaheim", () => {
     // Setup the provider and program

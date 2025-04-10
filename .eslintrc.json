@@ -2,23 +2,50 @@
   "root": true,
   "parser": "@typescript-eslint/parser",
   "plugins": ["@typescript-eslint", "react", "react-hooks", "jsx-a11y"],
+  "parserOptions": {
+    "ecmaVersion": 2020,
+    "sourceType": "module",
+    "ecmaFeatures": {
+      "jsx": true
+    }
+  },
   "extends": [
     "eslint:recommended",
-    "plugin:react/recommended",
     "plugin:@typescript-eslint/recommended",
+    "plugin:react/recommended",
     "plugin:react-hooks/recommended",
     "plugin:jsx-a11y/recommended",
+    "plugin:cypress/recommended",
     "next/core-web-vitals"
   ],
   "rules": {
-    "@typescript-eslint/no-unused-vars": "off",
+    "no-unused-vars": "off",
+    "@typescript-eslint/no-unused-vars": ["error"],
+    "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/ban-ts-comment": "off",
+    "@typescript-eslint/no-require-imports": "off",
+    "quotes": ["error", "double"],
+    "indent": ["error", 4],
     "jsx-a11y/click-events-have-key-events": "off",
     "jsx-a11y/no-noninteractive-element-interactions": "off",
-    "@typescript-eslint/no-explicit-any": "off",
-    "react-hooks/rules-of-hooks": "off",
     "jsx-a11y/no-noninteractive-tabindex": "off",
-    "@typescript-eslint/no-require-imports": "off",
-    "@typescript-eslint/ban-ts-comment": "off"
+    "react-hooks/rules-of-hooks": "off"
   },
-  "ignorePatterns": ["node_modules/", "dist/", "build/"]
+  "ignorePatterns": ["node_modules/", "dist/", "build/"],
+  "overrides": [
+    {
+      "files": ["*.ts", "*.tsx"],
+      "rules": {
+        "@typescript-eslint/explicit-module-boundary-types": "off",
+        "@typescript-eslint/no-explicit-any": "off"
+      }
+    },
+    {
+      "files": ["src/plugins/index.ts"],
+      "rules": {
+        "@typescript-eslint/no-var-requires": "off",
+        "no-undef": "off"
+      }
+    }
+  ]
 }

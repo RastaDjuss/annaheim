@@ -1,6 +1,6 @@
 use anchor_lang::prelude::*;
 use crate::core::initialize;
-
+require!(username.len() <= 32, ErrorCode::InvalidUsernameLength);
 // Declare the Program ID
 declare_id!("coUnmi3oBUtwtd9fjeAvSsJssXh5A5xyPbhpewyzRVF");
 
@@ -45,8 +45,11 @@ pub mod core {
     }
 }
 
-// Anaheim Main Account
-#[account]
+impl Anaheim {
+    pub fn space() -> usize {
+        8 + 8 // Discriminator (8) + u64 field (8)
+    }
+}
 pub struct Anaheim {
     pub data: u64, // Represents the state of Anaheim
 }
@@ -54,17 +57,12 @@ pub struct Anaheim {
 // Context: Initialize Anaheim Account
 #[derive(Accounts)]
 pub struct InitializeAnaheim<'info> {
-    #[account(
-        init,
-        payer = user,
-        space = 8 + 8 // 8 bytes discriminator + 8 bytes for data
-    )]
+    #[account(init, payer = payer, space = 8 + 8)] // Adjust space for your program
     pub anaheim: Account<'info, Anaheim>,
     #[account(mut)]
-    pub user: Signer<'info>,
+    pub payer: Signer<'info>,
     pub system_program: Program<'info, System>,
 }
-
 // Context: Close Anaheim Account
 #[derive(Accounts)]
 pub struct CloseAnaheim<'info> {
