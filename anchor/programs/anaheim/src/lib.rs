@@ -1,70 +1,110 @@
-#![allow(clippy::result_large_err)]
-
 use anchor_lang::prelude::*;
-
+use crate::core::initialize;
+require!(username.len() <= 32, ErrorCode::InvalidUsernameLength);
+// Declare the Program ID
 declare_id!("coUnmi3oBUtwtd9fjeAvSsJssXh5A5xyPbhpewyzRVF");
 
+// Main module containing the program
 #[program]
 pub mod anaheim {
     use super::*;
 
-  pub fn close(_ctx: Context<CloseAnaheim>) -> Result<()> {
-    Ok(())
-  }
+    // Initialize Anaheim
+    pub fn initialize_anaheim(ctx: Context<InitializeAnaheim>) -> Result<()> {
+        initialize(ctx) // Call core logic to initialize Anaheim
+    }
 
-  pub fn decrement(ctx: Context<Update>) -> Result<()> {
-    ctx.accounts.anaheim.count = ctx.accounts.anaheim.count.checked_sub(1).unwrap();
-    Ok(())
-  }
+    // Create a User Account
+    pub fn create_user(ctx: Context<CreateUser>, username: String) -> Result<()> {
+        if username.len() > 32 {
+            return Err(ErrorCode::InvalidUsernameLength.into());
+        }
+        msg!("Creating user with username: {}", username);
+        Ok(())
+    }
 
-  pub fn increment(ctx: Context<Update>) -> Result<()> {
-    ctx.accounts.anaheim.count = ctx.accounts.anaheim.count.checked_add(1).unwrap();
-    Ok(())
-  }
-
-  pub fn initialize(_ctx: Context<InitializeAnaheim>) -> Result<()> {
-    Ok(())
-  }
-
-  pub fn set(ctx: Context<Update>, value: u8) -> Result<()> {
-    ctx.accounts.anaheim.count = value.clone();
-    Ok(())
-  }
+    // Create a Post
+    pub fn create_post(ctx: Context<CreatePost>, content: String) -> Result<()> {
+        if content.is_empty() {
+            return Err(ErrorCode::EmptyPostContent.into());
+        }
+        msg!("Creating post with content: {}", content);
+        Ok(())
+    }
 }
 
+// Core logic module
+pub mod core {
+    use anchor_lang::prelude::*;
+    use crate::InitializeAnaheim;
+
+    // Shared logic for initializing Anaheim
+    pub fn initialize(ctx: Context<InitializeAnaheim>) -> Result<()> {
+        msg!("Anaheim initialization logic called.");
+        Ok(())
+    }
+}
+
+impl Anaheim {
+    pub fn space() -> usize {
+        8 + 8 // Discriminator (8) + u64 field (8)
+    }
+}
+pub struct Anaheim {
+    pub data: u64, // Represents the state of Anaheim
+}
+
+// Context: Initialize Anaheim Account
 #[derive(Accounts)]
 pub struct InitializeAnaheim<'info> {
-  #[account(mut)]
-  pub payer: Signer<'info>,
-
-  #[account(
-  init,
-  space = 8 + Anaheim::INIT_SPACE,
-  payer = payer
-  )]
-  pub anaheim: Account<'info, Anaheim>,
-  pub system_program: Program<'info, System>,
+    #[account(init, payer = payer, space = 8 + 8)] // Adjust space for your program
+    pub anaheim: Account<'info, Anaheim>,
+    #[account(mut)]
+    pub payer: Signer<'info>,
+    pub system_program: Program<'info, System>,
 }
+// Context: Close Anaheim Account
 #[derive(Accounts)]
 pub struct CloseAnaheim<'info> {
-  #[account(mut)]
-  pub payer: Signer<'info>,
-
-  #[account(
-  mut,
-  close = payer, // close account and return lamports to payer
-  )]
-  pub anaheim: Account<'info, Anaheim>,
+    #[account(mut, close = user)]
+    pub anaheim: Account<'info, Anaheim>, // Closing the Anaheim account refunds lamports to user
+    #[account(mut)]
+    pub user: Signer<'info>,
 }
 
+// Context: Update Anaheim Account
 #[derive(Accounts)]
 pub struct Update<'info> {
-  #[account(mut)]
-  pub anaheim: Account<'info, Anaheim>,
+    #[account(mut)]
+    pub anaheim: Account<'info, Anaheim>, // The Anaheim account being updated
+    #[account(mut)]
+    pub user: Signer<'info>, // The signer making the update
+    pub system_program: Program<'info, System>,
 }
 
-#[account]
-#[derive(InitSpace)]
-pub struct Anaheim {
-  count: u8,
+// Context: Create User Account
+#[derive(Accounts)]
+pub struct CreateUser<'info> {
+    #[account(mut)]
+    pub user: Signer<'info>,
+    pub system_program: Program<'info, System>,
+}
+
+// Context: Create Post
+#[derive(Accounts)]
+pub struct CreatePost<'info> {
+    #[account(mut)]
+    pub user: Signer<'info>,
+    pub system_program: Program<'info, System>,
+}
+
+// Error definitions for the program
+#[error_code]
+pub enum ErrorCode {
+    #[msg("Anaheim data overflow error.")]
+    DataOverflow,
+    #[msg("Invalid username length.")]
+    InvalidUsernameLength,
+    #[msg("Post content is empty.")]
+    EmptyPostContent,
 }

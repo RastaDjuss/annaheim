@@ -1,0 +1,3 @@
+[submodule "anchor/programs/nx"]
+	path = anchor/programs/nx
+	url = git@github.com:KuDeTT-A-Global/nx.git

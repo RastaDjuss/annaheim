@@ -1,38 +1,76 @@
 'use client'
 
-import { useWallet } from '@solana/wallet-adapter-react'
-import { WalletButton } from '../solana/solana-provider'
-import { AppHero, ellipsify } from '../ui/ui-layout'
-import { ExplorerLink } from '../cluster/cluster-ui'
-import { useAnaheimProgram } from './anaheim-data-access'
-import { AnaheimCreate, AnaheimList } from './anaheim-ui'
+import React, { useState } from 'react'
+import { Keypair, PublicKey } from '@solana/web3.js'
+import { useAnaheimProgram } from './hooks/useAnaheimProgram'
+import { useAnaheimMutations } from './hooks/useAnaheimMutations'
+import { useAccountQuery } from './hooks/useAccountQuery'
 
 export default function AnaheimFeature() {
-  const { publicKey } = useWallet()
-  const { programId } = useAnaheimProgram()
+    const [selectedAccount, setSelectedAccount] = useState<PublicKey | null>(null)
 
-  return publicKey ? (
-    <div>
-      <AppHero
-        title="Anaheim"
-        subtitle={
-          'Create a new account by clicking the "Create" button. The state of a account is stored on-chain and can be manipulated by calling the program\'s methods (increment, decrement, set, and close).'
-        }
-      >
-        <p className="mb-6">
-          <ExplorerLink path={`account/${programId}`} label={ellipsify(programId.toString())} />
-        </p>
-        <AnaheimCreate />
-      </AppHero>
-      <AnaheimList />
-    </div>
-  ) : (
-    <div className="max-w-4xl mx-auto">
-      <div className="hero py-[64px]">
-        <div className="hero-content text-center">
-          <WalletButton />
+// Fetching accounts and initializing accounts.
+    const { accounts: accountsQuery, initialize } = useAnaheimProgram() as unknown as {
+        accounts: {
+            isLoading: boolean;
+            data?: Array<{ publicKey: PublicKey }>;
+        };
+        initialize: any;
+    }
+
+// Query to fetch account data of the selected account.
+    const { data: accountData, isLoading: accountLoading } = useAccountQuery(selectedAccount ?? undefined)
+
+// Mutations for selected account actions (increment, decrement, etc.).
+    const { incrementMutation, decrementMutation, setMutation, closeMutation } = useAnaheimMutations(selectedAccount)
+    const handleInitialize = async () => {
+        const newKeypair = Keypair.generate()
+        initialize.mutate(newKeypair)
+        setSelectedAccount(newKeypair.publicKey)
+    }
+
+    return (
+        <div>
+            <h1>Anaheim Feature</h1>
+
+            {/* Initialize Button */}
+            <button onClick={handleInitialize}>Initialize Account</button>
+
+            {/* Display All Accounts */}
+            {accountsQuery?.isLoading ? (
+                <p>Loading accounts...</p>
+            ) : (
+                <ul>
+                    {accountsQuery.data?.map((account) => (
+                        <li key={account.publicKey.toBase58()}>
+                            <button onClick={() => setSelectedAccount(account.publicKey)}>
+                                {account.publicKey.toBase58() || 'N/A'}
+                            </button>
+                        </li>
+                    ))}
+                </ul>
+            )}
+
+            {/* Display Selected Account */}
+            {selectedAccount && (
+                <section>
+                    <h2>Selected Account: {selectedAccount.toBase58()}</h2>
+                    {accountLoading ? (
+                        <p>Loading account data...</p>
+                    ) : (
+                        accountData && (
+                            <div>
+                                <p>Current Count: {accountData.count}</p>
+
+                                <button onClick={() => incrementMutation.mutate()}>Increment</button>
+                                <button onClick={() => decrementMutation.mutate()}>Decrement</button>
+                                <button onClick={() => setMutation.mutate(5)}>Set Count to 5</button>
+                                <button onClick={() => closeMutation.mutate()}>Close Account</button>
+                            </div>
+                        )
+                    )}
+                </section>
+            )}
         </div>
-      </div>
-    </div>
-  )
+    )
 }
